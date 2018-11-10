@@ -18,6 +18,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -64,26 +66,62 @@ public class PaymentsBean {
         return payment;
     }
 
-    public Payment putPayment(Integer paymentId, Payment payment) {
+    public Payment pay(Integer userId) {
 
-        Payment b = em.find(Payment.class, paymentId);
-
-        if (b == null) {
-            return null;
-        }
+        Payment p = new Payment();
+        p.setDateOfPayment(Instant.now());
+        p.setEndOfSubscription(Instant.now().plus(30, ChronoUnit.DAYS));
+        p.setSubscription(true);
+        p.setUserId(userId);
 
         try {
             beginTx();
-            b.setId(b.getId());
-            b = em.merge(payment);
+            em.persist(p);
             commitTx();
         } catch (Exception e) {
             rollbackTx();
         }
 
-        return b;
+        return p;
     }
-	
+
+
+    public Payment putPayment(Integer paymentId, Payment payment) {
+
+        Payment p = em.find(Payment.class, paymentId);
+
+        if (p == null) {
+            return null;
+        }
+
+        try {
+            beginTx();
+            p.setId(p.getId());
+            p = em.merge(payment);
+            commitTx();
+        } catch (Exception e) {
+            rollbackTx();
+        }
+
+        return p;
+    }
+
+    public Payment subscribed(Integer userId) {
+
+        Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
+                .setParameter(1, userId)
+                .setParameter(2, true)
+                .getSingleResult();
+
+        if(p.getEndOfSubscription().isBefore(Instant.now()))
+        {
+            p.setSubscription(false);
+            p = putPayment(p.getId(), p);
+        }
+        return p;
+    }
+
+
     public boolean deletePayment(Integer paymentId) {
 
         Payment payment = em.find(Payment.class, paymentId);

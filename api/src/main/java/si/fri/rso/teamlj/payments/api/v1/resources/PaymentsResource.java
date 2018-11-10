@@ -10,6 +10,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @ApplicationScoped
@@ -57,11 +59,43 @@ public class PaymentsResource {
         }
     }
 
+    @POST
+    @Path("/pay/{userId}")
+    public Response pay(@PathParam("userId") Integer userId) {
+
+        Payment payment = paymentsBean.pay(userId);
+
+        if (payment.getId() != null) {
+            return Response.status(Response.Status.CREATED).entity(payment).build();
+        } else {
+            return Response.status(Response.Status.CONFLICT).entity(payment).build();
+        }
+    }
+
     @PUT
     @Path("/{paymentId}")
     public Response putPayment(@PathParam("paymentId") Integer paymentId, Payment payment) {
 
         payment = paymentsBean.putPayment(paymentId, payment);
+
+        if (payment == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            if (payment.getId() != null)
+                return Response.status(Response.Status.OK).entity(payment).build();
+            else
+                return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+    }
+
+    /**
+     * uporabnik preverja, če ima še vedno naročnino na kolo
+     */
+    @PUT
+    @Path("/subscribed/{userId}")
+    public Response subscribed(@PathParam("userId") Integer userId) {
+
+        Payment payment = paymentsBean.subscribed(userId);
 
         if (payment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
