@@ -10,9 +10,12 @@ kumuluzee:
       port: 8083
   datasources:
     - jndi-name: jdbc/PaymentDS
-      connection-url: jdbc:postgresql://localhost:5435/payment
-      username: postgres
-      password: postgres
+      connection-url: jdbc:postgresql://35.228.47.159:5435/payment
+      username: rso
+      password: rso
+      #connection-url: jdbc:postgresql://localhost:5435/payment
+      #username: postgres
+      #password: postgres
       max-pool-size: 20
   discovery:
     etcd:
