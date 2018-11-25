@@ -108,15 +108,22 @@ public class PaymentsBean {
 
     public Payment subscribed(Integer userId) {
 
-        // TODO - zakaj true na subscription?
-        /*Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
+        List<Payment> pList = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
                 .setParameter(1, userId)
                 .setParameter(2, true)
-                .getSingleResult();*/
+                .getResultList();
 
-        Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1", Payment.class)
-                .setParameter(1, userId)
-                .getSingleResult();
+        if (pList.size() == 0) { // nima nobenega true paymenta
+            pList = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1", Payment.class)
+                    .setParameter(1, userId)
+                    .getResultList();
+
+            if (pList.size() == 0) { // nima nobenega paymenta sploh
+                log.warning("User do not have payment at all");
+            }
+        }
+
+        Payment p = pList.get(pList.size() - 1);
 
         if(p.getEndOfSubscription().isBefore(Instant.now()))
         {
