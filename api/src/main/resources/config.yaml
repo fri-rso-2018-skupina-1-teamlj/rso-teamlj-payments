@@ -12,7 +12,7 @@ kumuluzee:
 #      connection-url: jdbc:postgresql://35.228.47.159:5435/payment
 #      username: rso
 #      password: rso
-      connection-url: jdbc:postgresql://192.168.1.5:5435/payment
+      connection-url: jdbc:postgresql://192.168.1.5:5435/payment # todo change ip
       username: postgres
       password: postgres
       max-pool-size: 20
