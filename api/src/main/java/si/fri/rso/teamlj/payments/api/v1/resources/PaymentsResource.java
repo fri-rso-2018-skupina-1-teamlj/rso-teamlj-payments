@@ -91,9 +91,29 @@ public class PaymentsResource {
     /**
      * uporabnik preverja, če ima še vedno naročnino na kolo
      */
+    // TODO - zakaj s put? lažje hendlamo get + to je samo klic info (glej spodaj)
     @PUT
     @Path("/subscribed/{userId}")
     public Response subscribed(@PathParam("userId") Integer userId) {
+
+        Payment payment = paymentsBean.subscribed(userId);
+
+        if (payment == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            if (payment.getId() != null)
+                return Response.status(Response.Status.OK).entity(payment).build();
+            else
+                return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+    }
+
+    /**
+     * uporabnik preverja, če ima še vedno naročnino na kolo - GET
+     */
+    @GET
+    @Path("/subscribed/{userId}")
+    public Response subscribedGet(@PathParam("userId") Integer userId) {
 
         Payment payment = paymentsBean.subscribed(userId);
 

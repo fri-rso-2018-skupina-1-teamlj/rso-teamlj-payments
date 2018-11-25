@@ -108,9 +108,14 @@ public class PaymentsBean {
 
     public Payment subscribed(Integer userId) {
 
-        Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
+        // TODO - zakaj true na subscription?
+        /*Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
                 .setParameter(1, userId)
                 .setParameter(2, true)
+                .getSingleResult();*/
+
+        Payment p = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1", Payment.class)
+                .setParameter(1, userId)
                 .getSingleResult();
 
         if(p.getEndOfSubscription().isBefore(Instant.now()))
