@@ -108,6 +108,8 @@ public class PaymentsBean {
 
     public Payment subscribed(Integer userId) {
 
+        // če je datum čez današnjega, mu setej subscription na false
+
         List<Payment> pList = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
                 .setParameter(1, userId)
                 .setParameter(2, true)
@@ -132,6 +134,34 @@ public class PaymentsBean {
         }
         return p;
     }
+
+    public String subscribedPut(Integer userId) {
+
+        List<Payment> paymentList = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
+                .setParameter(1, userId)
+                .setParameter(2, true)
+                .getResultList();
+
+        if (paymentList.size() == 0) {
+            return "";
+        }
+
+        else {
+
+            Payment payment = paymentList.get(paymentList.size() - 1);
+
+            if (payment.getEndOfSubscription().isBefore(Instant.now())) {
+                payment.setSubscription(false);
+                payment = putPayment(payment.getId(), payment);
+
+                return "";
+            }
+
+            return payment.getEndOfSubscription().toString();
+        }
+
+    }
+
 
 
     public boolean deletePayment(Integer paymentId) {

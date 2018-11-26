@@ -96,15 +96,15 @@ public class PaymentsResource {
     @Path("/subscribed/{userId}")
     public Response subscribed(@PathParam("userId") Integer userId) {
 
-        Payment payment = paymentsBean.subscribed(userId);
+        String result = paymentsBean.subscribedPut(userId);
 
-        if (payment == null) {
+        if (result == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
-            if (payment.getId() != null)
-                return Response.status(Response.Status.OK).entity(payment).build();
+            if (result.equals(""))
+                return Response.status(Response.Status.OK).entity("Ni veljavne naročnine").build();
             else
-                return Response.status(Response.Status.NOT_MODIFIED).build();
+                return Response.status(Response.Status.OK).entity("Veljavna naročnina do " + result).build();
         }
     }
 
