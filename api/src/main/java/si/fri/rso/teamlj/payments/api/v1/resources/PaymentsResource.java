@@ -104,7 +104,7 @@ public class PaymentsResource {
             if (result.equals(""))
                 return Response.status(Response.Status.OK).entity("Ni veljavne naročnine").build();
             else
-                return Response.status(Response.Status.OK).entity("Veljavna naročnina do " + result).build();
+                return Response.status(Response.Status.OK).entity(result).build();
         }
     }
 
