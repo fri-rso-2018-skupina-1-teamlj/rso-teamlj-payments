@@ -9,11 +9,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: payment
   rso-payments:
-    image: jp8874/rso-teamlj-payments:1.2
+    image: jp8874/rso-teamlj-payments:1.4
     ports:
     - 8083:8083
     environment:
       KUMULUZEE_DATASOURCES0_CONNECTIONURL: jdbc:postgresql://172.17.0.1:5435/payment
+      KUMULUZEE_DATASOURCES0_USERNAME: postgres
+      KUMULUZEE_DATASOURCES0_PASSWORD: postgres
       KUMULUZEE_DISCOVERY_ETCD_HOSTS: http://172.17.0.1:2379
     depends_on:
     - postgres
