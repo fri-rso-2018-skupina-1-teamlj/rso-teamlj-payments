@@ -52,7 +52,7 @@ public class PaymentsBean {
 
     }
 
-    public List<Payment> getPaymentsFallback() {
+    public List<Payment> getPaymentsFallback(UriInfo uriInfo) {
 
         return Collections.emptyList();
 
