@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: payment
   rso-payments:
-    image: jp8874/rso-teamlj-payments:1.4
+    image: jp8874/rso-teamlj-payments:2.0
     ports:
     - 8083:8083
     environment:

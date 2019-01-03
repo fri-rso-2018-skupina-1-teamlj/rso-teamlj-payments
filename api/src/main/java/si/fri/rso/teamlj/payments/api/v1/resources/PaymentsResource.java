@@ -1,5 +1,6 @@
 package si.fri.rso.teamlj.payments.api.v1.resources;
 
+import com.kumuluz.ee.logs.cdi.Log;
 import si.fri.rso.teamlj.payments.entities.Payment;
 import si.fri.rso.teamlj.payments.services.beans.PaymentsBean;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/payments")
+@Log
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PaymentsResource {
@@ -91,7 +93,6 @@ public class PaymentsResource {
     /**
      * uporabnik preverja, če ima še vedno naročnino na kolo
      */
-    // TODO - zakaj s put? lažje hendlamo get + to je samo klic info (glej spodaj)
     @PUT
     @Path("/subscribed/{userId}")
     public Response subscribed(@PathParam("userId") Integer userId) {
@@ -113,6 +114,7 @@ public class PaymentsResource {
      */
     @GET
     @Path("/subscribed/{userId}")
+    @Deprecated
     public Response subscribedGet(@PathParam("userId") Integer userId) {
 
         Payment payment = paymentsBean.subscribed(userId);

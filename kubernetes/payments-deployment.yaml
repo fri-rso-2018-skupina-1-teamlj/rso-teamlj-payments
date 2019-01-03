@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: payments
-        image: jp8874/rso-teamlj-payments:1.4
+        image: jp8874/rso-teamlj-payments:2.0
         env:
           - name: KUMULUZEE_DISCOVERY_CLUSTER
             value: gcloud

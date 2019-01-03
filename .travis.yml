@@ -14,7 +14,7 @@ cache:
   - $HOME/.m2
 
 env:
-- DOCKER_IMAGE=jp8874/rso-teamlj-payments:1.4
+- DOCKER_IMAGE=jp8874/rso-teamlj-payments:2.0
 
 script:
 - mvn clean package -U

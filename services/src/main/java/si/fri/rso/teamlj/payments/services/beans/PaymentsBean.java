@@ -2,6 +2,11 @@ package si.fri.rso.teamlj.payments.services.beans;
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import si.fri.rso.teamlj.payments.entities.Payment;
 
@@ -20,6 +25,7 @@ import javax.ws.rs.core.UriInfo;
 import java.time.Instant;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,7 +37,11 @@ public class PaymentsBean {
     @Inject
     private EntityManager em;
 
-
+    @Timed(name = "get_payments_timed")
+    @Counted(name = "get_payments_counter")
+    @CircuitBreaker(requestVolumeThreshold = 3)
+    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Fallback(fallbackMethod = "getPaymentsFallback")
     public List<Payment> getPayments(UriInfo uriInfo) {
 
         QueryParameters queryParameters = QueryParameters.query(uriInfo.getRequestUri().getQuery())
@@ -42,6 +52,17 @@ public class PaymentsBean {
 
     }
 
+    public List<Payment> getPaymentsFallback() {
+
+        return Collections.emptyList();
+
+    }
+
+    @Timed(name = "get_payment_timed")
+    @Counted(name = "get_payment_counter")
+    @CircuitBreaker(requestVolumeThreshold = 3)
+    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Fallback(fallbackMethod = "getPaymentFallback")
     public Payment getPayment(Integer paymentId) {
 
         Payment payment = em.find(Payment.class, paymentId);
@@ -51,6 +72,14 @@ public class PaymentsBean {
         }
 
         return payment;
+    }
+
+    public Payment getPaymentFallback(Integer paymentId) {
+
+        log.warning("method - getPaymentFallback called");
+
+        return new Payment();
+
     }
 
     public Payment createPayment(Payment payment) {
@@ -106,6 +135,7 @@ public class PaymentsBean {
         return p;
     }
 
+    @Deprecated
     public Payment subscribed(Integer userId) {
 
         // če je datum čez današnjega, mu setej subscription na false
@@ -135,6 +165,11 @@ public class PaymentsBean {
         return p;
     }
 
+    @Timed(name = "subscribed_put_timed")
+    @Counted(name = "subscribed_put_counter")
+    @CircuitBreaker(requestVolumeThreshold = 3)
+    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Fallback(fallbackMethod = "subscribedPutFallback")
     public String subscribedPut(Integer userId) {
 
         List<Payment> paymentList = em.createQuery("SELECT p FROM payments p WHERE p.userId = ?1 AND p.subscription = ?2", Payment.class)
@@ -159,6 +194,12 @@ public class PaymentsBean {
 
             return payment.getEndOfSubscription().toString();
         }
+
+    }
+
+    public String subscribedPutFallback(Integer userId) {
+
+        return "";
 
     }
 
