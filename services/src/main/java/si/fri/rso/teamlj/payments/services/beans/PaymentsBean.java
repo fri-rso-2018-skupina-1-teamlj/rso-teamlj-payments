@@ -40,7 +40,7 @@ public class PaymentsBean {
     @Timed(name = "get_payments_timed")
     @Counted(name = "get_payments_counter")
     @CircuitBreaker(requestVolumeThreshold = 3)
-    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
     @Fallback(fallbackMethod = "getPaymentsFallback")
     public List<Payment> getPayments(UriInfo uriInfo) {
 
@@ -61,7 +61,7 @@ public class PaymentsBean {
     @Timed(name = "get_payment_timed")
     @Counted(name = "get_payment_counter")
     @CircuitBreaker(requestVolumeThreshold = 3)
-    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
     @Fallback(fallbackMethod = "getPaymentFallback")
     public Payment getPayment(Integer paymentId) {
 
@@ -168,7 +168,7 @@ public class PaymentsBean {
     @Timed(name = "subscribed_put_timed")
     @Counted(name = "subscribed_put_counter")
     @CircuitBreaker(requestVolumeThreshold = 3)
-    @Timeout(value = 2, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 5, unit = ChronoUnit.SECONDS)
     @Fallback(fallbackMethod = "subscribedPutFallback")
     public String subscribedPut(Integer userId) {
 
@@ -202,8 +202,6 @@ public class PaymentsBean {
         return "";
 
     }
-
-
 
     public boolean deletePayment(Integer paymentId) {
 
